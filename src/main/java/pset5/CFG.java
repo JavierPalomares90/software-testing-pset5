@@ -91,7 +91,54 @@ public class CFG
     public boolean isReachable(String methodFrom, String clazzFrom,
                                String methodTo, String clazzTo)
     {
+        if(methodFrom == null || clazzFrom == null || methodTo == null || clazzTo == null)
+        {
+            return false;
+        }
         //TODO: Finish
+        Node start = null;
+        // Find the start node
+        for (Node n: nodes)
+        {
+            if (clazzFrom.equals(n.getClazz().getClassName()) && methodFrom.equals(n.getMethod().getName()))
+            {
+                start = n;
+                break;
+            }
+        }
+        if(start == null)
+        {
+            // Did not find a start node
+            return false;
+        }
+        Set<Node> visitedNodes = new HashSet<Node>();
+
+        // Iterate over the CFG using DFS
+        Stack<Node> s  = new Stack<Node>();
+        s.push(start);
+        while(s.empty() == false)
+        {
+            Node curr = s.pop();
+            if(visitedNodes.contains(curr))
+            {
+                continue;
+            }
+            visitedNodes.add(curr);
+            String currMethodName = curr.getMethod().getName();
+            String currClazzName = curr.getClazz().getClassName();
+
+            // Check if the current node is the destination node
+            if(methodTo.equals(currMethodName) && clazzTo.equals(currClazzName))
+            {
+                return true;
+            }
+            // Get the nodes reachable from the current node
+            Set<Node> neighbors = edges.get(curr);
+            for(Node n : neighbors)
+            {
+                s.push(n);
+            }
+        }
         // you will implement this method in Question 2.2
         return false;
     }

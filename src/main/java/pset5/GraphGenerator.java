@@ -7,6 +7,11 @@ import org.apache.bcel.generic.*;
 
 public class GraphGenerator
 {
+    private static int JSR_W_OPCODE = 0xc9;
+    private static int JSR_OPCODE = 0xa8;
+    private static int LOOKUP_SWITCH_OPCODE = 0xab;
+    private static int TABLE_SWITCH_OPCODE = 0xaa;
+
     public CFG createCFG(String className) throws ClassNotFoundException
     {
         CFG cfg = new CFG();
@@ -25,6 +30,12 @@ public class GraphGenerator
                 Instruction inst = ih.getInstruction();
                 // your code goes here
                 // TODO: Finish
+                int opCode = inst.getOpcode();
+                if(opCode == JSR_OPCODE || opCode == JSR_W_OPCODE || opCode == LOOKUP_SWITCH_OPCODE || opCode == TABLE_SWITCH_OPCODE)
+                {
+                    // ignore the instruction
+                    continue;
+                }
             }
         }
         return cfg;
