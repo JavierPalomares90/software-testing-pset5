@@ -44,6 +44,9 @@ public class GraphGenerator
                     // ignore the instruction
                     continue;
                 }
+                InstructionHandle next  = ih.getNext();
+                int nextPos = next.getPosition();
+                cfg.addEdge(position,nextPos,m,jc);
             }
         }
         return cfg;
