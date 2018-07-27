@@ -11,6 +11,12 @@ public class GraphGenerator
     private static int JSR_OPCODE = 0xa8;
     private static int LOOKUP_SWITCH_OPCODE = 0xab;
     private static int TABLE_SWITCH_OPCODE = 0xaa;
+    private static int INVOKE_DYNAMIC_OPCODE = 0xba;
+    private static int INVOKE_INTERFACE_OPCODE = 0xb9;
+    private static int INVOKE_SPECIAL_OPCODE = 0Xb7;
+    private static int INVOKE_STATIC_OPECODE = 0xb8;
+    private static int INVOKE_VIRTUAL_OPCODE = 0Xb6;
+
 
     public CFG createCFG(String className) throws ClassNotFoundException
     {
@@ -31,7 +37,9 @@ public class GraphGenerator
                 // your code goes here
                 // TODO: Finish
                 int opCode = inst.getOpcode();
-                if(opCode == JSR_OPCODE || opCode == JSR_W_OPCODE || opCode == LOOKUP_SWITCH_OPCODE || opCode == TABLE_SWITCH_OPCODE)
+
+                if(opCode == JSR_OPCODE || opCode == JSR_W_OPCODE || opCode == LOOKUP_SWITCH_OPCODE || opCode == TABLE_SWITCH_OPCODE
+                    || opCode == INVOKE_DYNAMIC_OPCODE || opCode == INVOKE_INTERFACE_OPCODE || opCode == INVOKE_SPECIAL_OPCODE || opCode ==INVOKE_STATIC_OPECODE || opCode == INVOKE_VIRTUAL_OPCODE)
                 {
                     // ignore the instruction
                     continue;
