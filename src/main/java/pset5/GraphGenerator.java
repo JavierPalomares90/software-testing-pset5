@@ -35,18 +35,29 @@ public class GraphGenerator
                 cfg.addNode(position, m, jc);
                 Instruction inst = ih.getInstruction();
                 // your code goes here
-                // TODO: Finish
                 int opCode = inst.getOpcode();
 
+                // Skip JSR[_w} and *switch operations
                 if(opCode == JSR_OPCODE || opCode == JSR_W_OPCODE || opCode == LOOKUP_SWITCH_OPCODE || opCode == TABLE_SWITCH_OPCODE
                     || opCode == INVOKE_DYNAMIC_OPCODE || opCode == INVOKE_INTERFACE_OPCODE || opCode == INVOKE_SPECIAL_OPCODE || opCode ==INVOKE_STATIC_OPECODE || opCode == INVOKE_VIRTUAL_OPCODE)
                 {
                     // ignore the instruction
                     continue;
                 }
+
                 InstructionHandle next  = ih.getNext();
-                int nextPos = next.getPosition();
+                int nextPos = -1;
+                if(next != null)
+                {
+                    nextPos = next.getPosition();
+                }
                 cfg.addEdge(position,nextPos,m,jc);
+                // TODO: Check if this is correct. Also check for ReturnInstructions
+                if(inst instanceof  BranchInstruction)
+                {
+                    int targetPosition = ((BranchInstruction) inst).getTarget().getPosition();
+                    cfg.addEdge(position,targetPosition,m,jc);
+                }
             }
         }
         return cfg;
@@ -62,7 +73,8 @@ public class GraphGenerator
     public static void main(String[] a) throws ClassNotFoundException
     {
         GraphGenerator gg = new GraphGenerator();
-        gg.createCFG("pset5.C"); // example invocation of createCFG
-        gg.createCFGWithMethodInvocation("pset5.D"); // example invocation of createCFGWithMethodInovcation
+        CFG cCFG = gg.createCFG("pset5.C"); // example invocation of createCFG
+        System.out.println(cCFG.toString());
+        CFG dCFG = gg.createCFGWithMethodInvocation("pset5.D"); // example invocation of createCFGWithMethodInovcation
     }
 }
