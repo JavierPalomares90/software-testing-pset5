@@ -138,8 +138,8 @@ public class CFG
             {
                 s.push(n);
             }
+            //TODO: Ask about how to work with method invokations and returns
         }
-        // you will implement this method in Question 2.2
         return false;
     }
 }

@@ -38,6 +38,7 @@ public class GraphGenerator
                 int opCode = inst.getOpcode();
 
                 // Skip JSR[_w} and *switch operations
+                //TODO: Check if these are the correct statements to skip
                 if(opCode == JSR_OPCODE || opCode == JSR_W_OPCODE || opCode == LOOKUP_SWITCH_OPCODE || opCode == TABLE_SWITCH_OPCODE
                     || opCode == INVOKE_DYNAMIC_OPCODE || opCode == INVOKE_INTERFACE_OPCODE || opCode == INVOKE_SPECIAL_OPCODE || opCode ==INVOKE_STATIC_OPECODE || opCode == INVOKE_VIRTUAL_OPCODE)
                 {
@@ -65,9 +66,56 @@ public class GraphGenerator
 
     public CFG createCFGWithMethodInvocation(String className) throws ClassNotFoundException
     {
-        // TODO: Finish
-        // your code goes here
-        return null;
+        CFG cfg = new CFG();
+        JavaClass jc = Repository.lookupClass(className);
+        ClassGen cg = new ClassGen(jc);
+        ConstantPoolGen cpg = cg.getConstantPool();
+
+        for (Method m: cg.getMethods())
+        {
+            MethodGen mg = new MethodGen(m, cg.getClassName(), cpg);
+            InstructionList il = mg.getInstructionList();
+            InstructionHandle[] handles = il.getInstructionHandles();
+            for (InstructionHandle ih : handles)
+            {
+                int position = ih.getPosition();
+                cfg.addNode(position, m, jc);
+                Instruction inst = ih.getInstruction();
+                int opCode = inst.getOpcode();
+
+                // Skip JSR[_w} and *switch operations.
+                // Don't skip INVOKE_STATIC this time
+                if(opCode == JSR_OPCODE || opCode == JSR_W_OPCODE || opCode == LOOKUP_SWITCH_OPCODE || opCode == TABLE_SWITCH_OPCODE
+                        || opCode == INVOKE_DYNAMIC_OPCODE || opCode == INVOKE_INTERFACE_OPCODE || opCode == INVOKE_SPECIAL_OPCODE || opCode == INVOKE_VIRTUAL_OPCODE)
+                {
+                    // ignore the instruction
+                    continue;
+                }
+                if(inst instanceof INVOKESTATIC)
+                {
+                    //TODO: Finish this
+                }
+                else
+                {
+                    InstructionHandle next  = ih.getNext();
+                    int nextPos = -1;
+                    if(next != null)
+                    {
+                        nextPos = next.getPosition();
+                    }
+                    cfg.addEdge(position,nextPos,m,jc);
+                    // TODO: Check if this is correct. Also check for ReturnInstructions
+                    if(inst instanceof  BranchInstruction)
+                    {
+                        int targetPosition = ((BranchInstruction) inst).getTarget().getPosition();
+                        cfg.addEdge(position,targetPosition,m,jc);
+                    }
+                }
+
+            }
+
+        }
+        return cfg;
     }
 
     public static void main(String[] a) throws ClassNotFoundException
