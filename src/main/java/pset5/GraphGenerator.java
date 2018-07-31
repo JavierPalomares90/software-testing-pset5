@@ -16,7 +16,39 @@ public class GraphGenerator
     private static int INVOKE_SPECIAL_OPCODE = 0Xb7;
     private static int INVOKE_STATIC_OPECODE = 0xb8;
     private static int INVOKE_VIRTUAL_OPCODE = 0Xb6;
+    // dummy integer to represent our single exit point
+    private static int DUMMY_EXIT_NODE = -1;
 
+    private void addNextInstruction(CFG cfg, InstructionHandle ih, Instruction inst, Method m, JavaClass jc, int position)
+    {
+        // Check if the instruction is a return instruction
+        if (inst instanceof ReturnInstruction)
+        {
+            // Add an edge from the current method to the exit dummy node
+            cfg.addEdge(position,DUMMY_EXIT_NODE,m,jc);
+            // Check if the instruction in a branch instruction
+        }else if(inst instanceof BranchInstruction)
+        {
+            // Add an edge from the current node to the target position
+            InstructionHandle target = ((BranchInstruction) inst).getTarget();
+            int targetPosition = DUMMY_EXIT_NODE;
+            if(target != null)
+            {
+                targetPosition = target.getPosition();
+            }
+            cfg.addEdge(position,targetPosition,m,jc);
+        }
+
+        // Add an edge from the current position to the target
+        InstructionHandle next  = ih.getNext();
+        int nextPos = DUMMY_EXIT_NODE;
+        if(next != null)
+        {
+            nextPos = next.getPosition();
+        }
+        cfg.addEdge(position,nextPos,m,jc);
+
+    }
 
     public CFG createCFG(String className) throws ClassNotFoundException
     {
@@ -24,6 +56,8 @@ public class GraphGenerator
         JavaClass jc = Repository.lookupClass(className);
         ClassGen cg = new ClassGen(jc);
         ConstantPoolGen cpg = cg.getConstantPool();
+
+
         for (Method m : cg.getMethods())
         {
             MethodGen mg = new MethodGen(m, cg.getClassName(), cpg);
@@ -38,27 +72,13 @@ public class GraphGenerator
                 int opCode = inst.getOpcode();
 
                 // Skip JSR[_w} and *switch operations
-                //TODO: Check if these are the correct statements to skip
                 if(opCode == JSR_OPCODE || opCode == JSR_W_OPCODE || opCode == LOOKUP_SWITCH_OPCODE || opCode == TABLE_SWITCH_OPCODE
                     || opCode == INVOKE_DYNAMIC_OPCODE || opCode == INVOKE_INTERFACE_OPCODE || opCode == INVOKE_SPECIAL_OPCODE || opCode ==INVOKE_STATIC_OPECODE || opCode == INVOKE_VIRTUAL_OPCODE)
                 {
                     // ignore the instruction
                     continue;
                 }
-
-                InstructionHandle next  = ih.getNext();
-                int nextPos = -1;
-                if(next != null)
-                {
-                    nextPos = next.getPosition();
-                }
-                cfg.addEdge(position,nextPos,m,jc);
-                // TODO: Check if this is correct. Also check for ReturnInstructions
-                if(inst instanceof  BranchInstruction)
-                {
-                    int targetPosition = ((BranchInstruction) inst).getTarget().getPosition();
-                    cfg.addEdge(position,targetPosition,m,jc);
-                }
+                addNextInstruction(cfg,ih,inst,m,jc,position);
             }
         }
         return cfg;
@@ -93,25 +113,28 @@ public class GraphGenerator
                 }
                 if(inst instanceof INVOKESTATIC)
                 {
-                    //TODO: Finish this
-                }
-                else
-                {
+                    // Get the invoked class and method names
+                    // TODO: Pretty sure this breaks with overloading methods
+                    String invokeMethodName = ((INVOKESTATIC) inst).getMethodName(cpg);
+                    String invokeClassName =  ((INVOKESTATIC) inst).getClassName(cpg);
+                    JavaClass invokeClass = Repository.lookupClass(invokeClassName);
+                    Method invokeMethod = null; //TODO: Figure out how to get this method
+                    // Add an edge from the current position to position 0 of the invoked method
+                    cfg.addEdge(position,m,jc,0,invokeMethod,invokeClass);
+
+                    // Get the next position
                     InstructionHandle next  = ih.getNext();
-                    int nextPos = -1;
+                    int nextPos = DUMMY_EXIT_NODE;
                     if(next != null)
                     {
                         nextPos = next.getPosition();
                     }
-                    cfg.addEdge(position,nextPos,m,jc);
-                    // TODO: Check if this is correct. Also check for ReturnInstructions
-                    if(inst instanceof  BranchInstruction)
-                    {
-                        int targetPosition = ((BranchInstruction) inst).getTarget().getPosition();
-                        cfg.addEdge(position,targetPosition,m,jc);
-                    }
+                    // Add an edge from the invoked method's exit to the nex position of the current method
+                    cfg.addEdge(DUMMY_EXIT_NODE,invokeMethod,invokeClass,nextPos,m,jc);
+                }else
+                {
+                    addNextInstruction(cfg, ih, inst, m, jc, position);
                 }
-
             }
 
         }
