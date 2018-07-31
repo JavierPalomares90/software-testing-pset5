@@ -100,7 +100,8 @@ public class CFG
         // Find the start node
         for (Node n: nodes)
         {
-            if (clazzFrom.equals(n.getClazz().getClassName()) && methodFrom.equals(n.getMethod().getName()))
+            // Start node has position 0 and matches the method and classnames
+            if (n.position == 0 && clazzFrom.equals(n.getClazz().getClassName()) && methodFrom.equals(n.getMethod().getName()))
             {
                 start = n;
                 break;

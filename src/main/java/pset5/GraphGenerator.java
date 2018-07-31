@@ -5,6 +5,9 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class GraphGenerator
 {
     private static int JSR_W_OPCODE = 0xc9;
@@ -90,6 +93,13 @@ public class GraphGenerator
         JavaClass jc = Repository.lookupClass(className);
         ClassGen cg = new ClassGen(jc);
         ConstantPoolGen cpg = cg.getConstantPool();
+        // Form a map of method names to method objects
+        Map<String,Method> methodMap = new HashMap<String,Method>();
+        //TODO: This work assuming we're not invoking methods from new classes
+        for (Method m: cg.getMethods())
+        {
+            methodMap.put(m.getName(),m);
+        }
 
         for (Method m: cg.getMethods())
         {
@@ -118,7 +128,8 @@ public class GraphGenerator
                     String invokeMethodName = ((INVOKESTATIC) inst).getMethodName(cpg);
                     String invokeClassName =  ((INVOKESTATIC) inst).getClassName(cpg);
                     JavaClass invokeClass = Repository.lookupClass(invokeClassName);
-                    Method invokeMethod = null; //TODO: Figure out how to get this method
+                    Method invokeMethod = methodMap.get(invokeMethodName); //TODO: Figure out how to get this method
+
                     // Add an edge from the current position to position 0 of the invoked method
                     cfg.addEdge(position,m,jc,0,invokeMethod,invokeClass);
 
