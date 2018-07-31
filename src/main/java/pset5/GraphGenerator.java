@@ -95,7 +95,6 @@ public class GraphGenerator
         ConstantPoolGen cpg = cg.getConstantPool();
         // Form a map of method names to method objects
         Map<String,Method> methodMap = new HashMap<String,Method>();
-        //TODO: This work assuming we're not invoking methods from new classes
         for (Method m: cg.getMethods())
         {
             methodMap.put(m.getName(),m);
@@ -124,11 +123,15 @@ public class GraphGenerator
                 if(inst instanceof INVOKESTATIC)
                 {
                     // Get the invoked class and method names
-                    // TODO: Pretty sure this breaks with overloading methods
                     String invokeMethodName = ((INVOKESTATIC) inst).getMethodName(cpg);
                     String invokeClassName =  ((INVOKESTATIC) inst).getClassName(cpg);
-                    JavaClass invokeClass = Repository.lookupClass(invokeClassName);
-                    Method invokeMethod = methodMap.get(invokeMethodName); //TODO: Figure out how to get this method
+                    // We only allow method invokations from the same method
+                    if(jc.getClassName().equals(invokeClassName) == false)
+                    {
+                        throw new ClassNotFoundException("Method only allows methods from same class");
+                    }
+                    JavaClass invokeClass = jc;
+                    Method invokeMethod = methodMap.get(invokeMethodName);
 
                     // Add an edge from the current position to position 0 of the invoked method
                     cfg.addEdge(position,m,jc,0,invokeMethod,invokeClass);
