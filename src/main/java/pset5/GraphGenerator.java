@@ -53,6 +53,12 @@ public class GraphGenerator
 
     }
 
+    /**
+     * Create a cfg for a class whose methods don't call other methods
+     * @param className
+     * @return the cfg
+     * @throws ClassNotFoundException
+     */
     public CFG createCFG(String className) throws ClassNotFoundException
     {
         CFG cfg = new CFG();
