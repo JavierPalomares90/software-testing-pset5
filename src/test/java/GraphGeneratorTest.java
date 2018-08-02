@@ -50,7 +50,7 @@ public class GraphGeneratorTest
     {
         GraphGenerator gg = new GraphGenerator();
         CFG cfg = gg.createCFG("pset5.C"); // example invocation of createCFG
-        boolean reachable = cfg.isReachable("max","pset.C","init","pset.C");
+        boolean reachable = cfg.isReachable("max","pset5.C","init","pset5.C");
         assertFalse(reachable);
 
     }

@@ -102,8 +102,13 @@ public class CFG
         {
             String methodName = n.getMethod().getName();
             String className = n.getClazz().getClassName();
+            int pos = n.position;
+
             // Start node has position 0 and matches the method and classnames
-            if (n.position == 0 && clazzFrom.equals(n.getClazz().getClassName()) && methodFrom.equals(n.getMethod().getName()))
+            boolean isStartNode = pos == 0;
+            boolean isStartClass = clazzFrom.matches(className);
+            boolean inStartMethod = methodFrom.matches(methodName);
+            if (isStartNode && isStartClass && inStartMethod)
             {
                 start = n;
                 break;
