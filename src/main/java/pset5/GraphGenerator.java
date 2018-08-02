@@ -30,6 +30,7 @@ public class GraphGenerator
             // Add an edge from the current method to the exit dummy node
             cfg.addEdge(position,DUMMY_EXIT_NODE,m,jc);
             // Check if the instruction in a branch instruction
+            return;
         }else if(inst instanceof BranchInstruction)
         {
             // Add an edge from the current node to the target position
@@ -78,15 +79,6 @@ public class GraphGenerator
                 cfg.addNode(position, m, jc);
                 Instruction inst = ih.getInstruction();
                 // your code goes here
-                int opCode = inst.getOpcode();
-
-                // Skip JSR[_w} and *switch operations
-                if(opCode == JSR_OPCODE || opCode == JSR_W_OPCODE || opCode == LOOKUP_SWITCH_OPCODE || opCode == TABLE_SWITCH_OPCODE
-                    || opCode == INVOKE_DYNAMIC_OPCODE || opCode == INVOKE_INTERFACE_OPCODE || opCode == INVOKE_SPECIAL_OPCODE || opCode ==INVOKE_STATIC_OPECODE || opCode == INVOKE_VIRTUAL_OPCODE)
-                {
-                    // ignore the instruction
-                    continue;
-                }
                 addNextInstruction(cfg,ih,inst,m,jc,position);
             }
         }
@@ -116,22 +108,13 @@ public class GraphGenerator
                 int position = ih.getPosition();
                 cfg.addNode(position, m, jc);
                 Instruction inst = ih.getInstruction();
-                int opCode = inst.getOpcode();
 
-                // Skip JSR[_w} and *switch operations.
-                // Don't skip INVOKE_STATIC this time
-                if(opCode == JSR_OPCODE || opCode == JSR_W_OPCODE || opCode == LOOKUP_SWITCH_OPCODE || opCode == TABLE_SWITCH_OPCODE
-                        || opCode == INVOKE_DYNAMIC_OPCODE || opCode == INVOKE_INTERFACE_OPCODE || opCode == INVOKE_SPECIAL_OPCODE || opCode == INVOKE_VIRTUAL_OPCODE)
-                {
-                    // ignore the instruction
-                    continue;
-                }
                 if(inst instanceof INVOKESTATIC)
                 {
                     // Get the invoked class and method names
                     String invokeMethodName = ((INVOKESTATIC) inst).getMethodName(cpg);
                     String invokeClassName =  ((INVOKESTATIC) inst).getClassName(cpg);
-                    // We only allow method invokations from the same method
+                    // We only allow method invokations from the same class
                     if(jc.getClassName().equals(invokeClassName) == false)
                     {
                         throw new ClassNotFoundException("Method only allows methods from same class");

@@ -2,6 +2,9 @@ import org.junit.Test;
 import pset5.CFG;
 import pset5.GraphGenerator;
 
+import java.util.Set;
+
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class GraphGeneratorTest
@@ -40,5 +43,15 @@ public class GraphGeneratorTest
         CFG cfg = gg.createCFGWithMethodInvocation("pset5.D"); // example invocation of createCFGWithMethodInovcation
         boolean reachable = cfg.isReachable("main", "pset5.D", "bar", "pset5.D");
         assertTrue(reachable);
+    }
+
+    @Test
+    public void testReachable3() throws ClassNotFoundException
+    {
+        GraphGenerator gg = new GraphGenerator();
+        CFG cfg = gg.createCFG("pset5.C"); // example invocation of createCFG
+        boolean reachable = cfg.isReachable("max","pset.C","init","pset.C");
+        assertFalse(reachable);
+
     }
 }
