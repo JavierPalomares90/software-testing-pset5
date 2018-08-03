@@ -149,14 +149,8 @@ public class CFG
             int currPosition = curr.position;
             // Check if the current node is an EXIT node
             boolean isExitNode = currPosition == GraphGenerator.DUMMY_EXIT_NODE;
-            if(isExitNode)
+            if(isExitNode && (methodInvocations.isEmpty() == false))
             {
-                if(methodInvocations.isEmpty())
-                {
-                    // There are no more method invocations.
-
-                    return false;
-                }
                 // Get the method that invoked this current method
                 Node invokee = methodInvocations.pop();
                 String methodName = invokee.getMethod().getName();

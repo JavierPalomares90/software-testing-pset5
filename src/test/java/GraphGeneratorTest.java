@@ -74,6 +74,12 @@ public class GraphGeneratorTest
         assertTrue(reachable);
         reachable = cfg.isReachable("bar","pset5.TestClass","da","pset5.TestClass");
         assertFalse(reachable);
+        reachable = cfg.isReachable("recursiveMethod","pset5.TestClass","main","pset5.TestClass");
+        assertFalse(reachable);
+        reachable = cfg.isReachable("recursiveMethod","pset5.TestClass","bar","pset5.TestClass");
+        assertFalse(reachable);
+        reachable = cfg.isReachable("recursiveMethod","pset5.TestClass","foo","pset5.TestClass");
+        assertFalse(reachable);
     }
 
     @Test
