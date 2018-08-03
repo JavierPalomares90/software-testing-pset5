@@ -17,6 +17,10 @@ public class TestClass
     static void da()
     {
     }
+    static void du()
+    {
+
+    }
 
 
     static void recursiveMethod(int i)
@@ -32,6 +36,27 @@ public class TestClass
     static void bar(String[] a)
     {
         foo(a);
+    }
+
+
+    static void ifffs(int i)
+    {
+        if(i < 0)
+        {
+            if(i < 10 )
+            {
+                if(i < 100)
+                {
+                    da();
+                    return;
+                }
+
+            }
+            bar(null);
+            return;
+        }
+        foo(null);
+
     }
 
 }

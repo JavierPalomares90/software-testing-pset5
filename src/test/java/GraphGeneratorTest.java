@@ -79,7 +79,14 @@ public class GraphGeneratorTest
         reachable = cfg.isReachable("recursiveMethod","pset5.TestClass","bar","pset5.TestClass");
         assertFalse(reachable);
         reachable = cfg.isReachable("recursiveMethod","pset5.TestClass","foo","pset5.TestClass");
+        reachable = cfg.isReachable("ifffs","pset5.TestClass","da","pset5.TestClass");
+        assertTrue(reachable);
+        reachable = cfg.isReachable("ifffs","pset5.TestClass","bar","pset5.TestClass");
+        assertTrue(reachable);
+        reachable = cfg.isReachable("ifffs","pset5.TestClass","main","pset5.TestClass");
         assertFalse(reachable);
+        reachable = cfg.isReachable("ifffs","pset5.TestClass","da","pset5.TestClass");
+        assertTrue(reachable);
     }
 
     @Test
@@ -90,6 +97,15 @@ public class GraphGeneratorTest
         boolean reachable = cfg.isReachable("recursiveMethod","pset5.TestClass","da","pset5.TestClass");
         assertTrue(reachable);
 
+    }
+
+    @Test
+    public void testReachable6() throws ClassNotFoundException
+    {
+        GraphGenerator gg = new GraphGenerator();
+        CFG cfg = gg.createCFGWithMethodInvocation("pset5.E"); // example invocation of createCFG
+        boolean reachable = cfg.isReachable("bar","pset5.E","main","pset5.E");
+        assertFalse(reachable);
     }
 
 }
