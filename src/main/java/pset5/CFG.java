@@ -149,18 +149,22 @@ public class CFG
             int currPosition = curr.position;
             // Check if the current node is an EXIT node
             boolean isExitNode = currPosition == GraphGenerator.DUMMY_EXIT_NODE;
-            if(isExitNode && (methodInvocations.isEmpty() == false))
+            // This condition is correct.
+            if(isExitNode)
             {
-                // Get the method that invoked this current method
-                Node invokee = methodInvocations.pop();
-                String methodName = invokee.getMethod().getName();
-                // Add only the nodes going back to the invokee
-                for(Node n : neighbors)
+                if(methodInvocations.isEmpty() == false)
                 {
-                    String str = n.getMethod().getName();
-                    if(methodName.equals(str))
+                    // Get the method that invoked this current method
+                    Node invokee = methodInvocations.pop();
+                    String methodName = invokee.getMethod().getName();
+                    // Add only the nodes going back to the invokee
+                    for(Node n : neighbors)
                     {
-                        s.push(n);
+                        String str = n.getMethod().getName();
+                        if(methodName.equals(str))
+                        {
+                            s.push(n);
+                        }
                     }
                 }
             }
