@@ -7,7 +7,6 @@ public class TestClass
         recursiveMethod(3);
         foo(a);
         bar(a);
-        da();
     }
 
     static void foo(String[] a)
@@ -25,6 +24,7 @@ public class TestClass
         {
             return;
         }
+        da();
         recursiveMethod(i-1);
     }
 
