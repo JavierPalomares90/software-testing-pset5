@@ -2,6 +2,7 @@ package pset5;
 
 public class TestClass
 {
+    /*
     public static void main(String[] a)
     {
         recursiveMethod(3);
@@ -14,9 +15,11 @@ public class TestClass
         if (a == null) return;
         bar(a);
     }
+    */
     static void da()
     {
     }
+
 
     static void recursiveMethod(int i)
     {
@@ -28,9 +31,11 @@ public class TestClass
         recursiveMethod(i-1);
     }
 
+    /*
     static void bar(String[] a)
     {
         foo(a);
     }
+    */
 
 }
