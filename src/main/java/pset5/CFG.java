@@ -95,7 +95,6 @@ public class CFG
         {
             return false;
         }
-        //TODO: Finish
         Node start = null;
         // Find the start node
         for (Node n: nodes)
@@ -123,6 +122,11 @@ public class CFG
 
         // Iterate over the CFG using DFS
         Stack<Node> s  = new Stack<Node>();
+
+        // Use a stack to keep track of method invocations
+        // If a method A invokes method B, then we must return to method A,
+        // and not other methods
+        Stack<Node> methodInvocations = new Stack<Node>();
         s.push(start);
         while(s.empty() == false)
         {
@@ -140,13 +144,49 @@ public class CFG
             {
                 return true;
             }
-            // Get the nodes reachable from the current node
             Set<Node> neighbors = edges.get(curr);
-            for(Node n : neighbors)
+
+            int currPosition = curr.position;
+            // Check if the current node is an EXIT node
+            boolean isExitNode = currPosition == GraphGenerator.DUMMY_EXIT_NODE;
+            if(isExitNode)
             {
-                s.push(n);
+                if(methodInvocations.isEmpty())
+                {
+                    // There are no more method invocations.
+
+                    return false;
+                }
+                // Get the method that invoked this current method
+                Node invokee = methodInvocations.pop();
+                String methodName = invokee.getMethod().getName();
+                // Add only the nodes going back to the invokee
+                for(Node n : neighbors)
+                {
+                    String str = n.getMethod().getName();
+                    if(methodName.equals(str))
+                    {
+                        s.push(n);
+                    }
+                }
             }
-            //TODO: Ask about how to work with method invokations and returns
+            else
+            {
+                // Get the nodes reachable from the current node
+                for(Node n : neighbors)
+                {
+                    int position = n.position;
+                    boolean isMethodInvocation = position == 0;
+                    // check if the neighbor is a method invocation
+                    if(isMethodInvocation)
+                    {
+                        // Add the currentNode to the stack
+                        methodInvocations.push(curr);
+
+                    }
+                    s.push(n);
+                }
+            }
         }
         return false;
     }

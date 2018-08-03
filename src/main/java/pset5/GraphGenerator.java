@@ -20,7 +20,7 @@ public class GraphGenerator
     private static int INVOKE_STATIC_OPECODE = 0xb8;
     private static int INVOKE_VIRTUAL_OPCODE = 0Xb6;
     // dummy integer to represent our single exit point
-    private static int DUMMY_EXIT_NODE = -1;
+    protected static int DUMMY_EXIT_NODE = -1;
 
     private void addNextInstruction(CFG cfg, InstructionHandle ih, Instruction inst, Method m, JavaClass jc, int position)
     {
