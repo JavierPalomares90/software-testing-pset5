@@ -54,4 +54,11 @@ public class GraphGeneratorTest
         assertFalse(reachable);
 
     }
+
+    @Test
+    public void testReachable4() throws ClassNotFoundException
+    {
+        GraphGenerator gg = new GraphGenerator();
+        CFG cfg = gg.createCFG("pset5.TestClass"); // example invocation of createCFG
+    }
 }
