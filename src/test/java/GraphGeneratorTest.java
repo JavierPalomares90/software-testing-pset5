@@ -87,6 +87,8 @@ public class GraphGeneratorTest
         assertFalse(reachable);
         reachable = cfg.isReachable("ifffs","pset5.TestClass","da","pset5.TestClass");
         assertTrue(reachable);
+        reachable = cfg.isReachable("ifffs","pset5.TestClass","du","pset5.TestClass");
+        assertTrue(reachable);
     }
 
     @Test

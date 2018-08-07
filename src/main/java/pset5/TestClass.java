@@ -16,6 +16,7 @@ public class TestClass
     }
     static void da()
     {
+        du();
     }
     static void du()
     {
